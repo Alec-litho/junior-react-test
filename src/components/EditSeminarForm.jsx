@@ -1,17 +1,23 @@
-import React, { useState, useContext } from "react";
+import React, { useState } from "react";
 import { Modal, Button, Form } from "react-bootstrap";
+import { updateSeminar } from "../api";
 
-const EditSeminarForm = ({ currSeminar, setCurrSeminar }) => {
+const EditSeminarForm = ({ currSeminar, setCurrSeminar, setSeminars, setIsLoading }) => {
   let [description, setDescription] = useState(currSeminar.description);
   let [title, setTitle] = useState(currSeminar.title);
 
   const handleUpdate = () => {
-    // const updatedItem = {
-    //   ...item,
-    //   title,
-    //   description,
-    //   imageUrl,
-    // };
+    setIsLoading(true);
+    let newSeminar = {
+      ...currSeminar,
+      description,
+      title,
+    };
+    updateSeminar(newSeminar).then(() => {
+      setSeminars((prev) => prev.map((s) => (s.id === newSeminar.id ? newSeminar : s)));
+      setCurrSeminar(null);
+      setIsLoading(false);
+    });
   };
 
   return (
@@ -23,7 +29,7 @@ const EditSeminarForm = ({ currSeminar, setCurrSeminar }) => {
         <Form>
           <Form.Group className="mb-3">
             <Form.Label>Title</Form.Label>
-            <Form.Control type="text" value={currSeminar.title} onChange={(e) => setTitle(e.target.value)} />
+            <Form.Control type="text" value={title} onChange={(e) => setTitle(e.target.value)} />
           </Form.Group>
 
           <Form.Group className="mb-3">
@@ -33,9 +39,6 @@ const EditSeminarForm = ({ currSeminar, setCurrSeminar }) => {
         </Form>
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="secondary" onClick={() => {}}>
-          Cancel
-        </Button>
         <Button variant="primary" onClick={handleUpdate}>
           Update Item
         </Button>

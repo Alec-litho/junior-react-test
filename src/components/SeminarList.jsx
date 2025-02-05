@@ -1,7 +1,16 @@
 import React, { useContext, useState } from "react";
 import { Container, Row, Col, Card, Button } from "react-bootstrap";
+import { deleteSeminar } from "../api";
 
-const SeminarList = ({ seminars, setCurrSeminar }) => {
+const SeminarList = ({ seminars, setCurrSeminar, setIsLoading, setSeminars }) => {
+  function handleDeleteSeminar(id) {
+    setIsLoading(true);
+    deleteSeminar(id).then(() => {
+      setSeminars((prev) => prev.filter((s) => s.id !== id));
+      setIsLoading(false);
+    });
+  }
+
   return (
     <Container className="my-4">
       <Row>
@@ -13,7 +22,7 @@ const SeminarList = ({ seminars, setCurrSeminar }) => {
                 <Card.Title>{item.title}</Card.Title>
                 <Card.Text>{item.description}</Card.Text>
                 <Card.Footer>
-                  <Button variant="danger" onClick={() => {}}>
+                  <Button variant="danger" onClick={() => handleDeleteSeminar(item.id)}>
                     Delete
                   </Button>
                   <Button variant="primary" onClick={() => setCurrSeminar(item)}>
